@@ -1,10 +1,12 @@
-export const environment = {
+import { environmentDefault } from 'src/environments/environment.default';
+import { IEnvironment } from 'src/environments/i-environment';
+
+const env: Partial<typeof environmentDefault> = {
   production: true,
-  apiUrl: '/api',
-  meteoblueApiKey: 'YOUR_METEOBLUE_API_KEY', // Remplacez par votre clé API MeteoBlue
-  defaultWeatherLocation: {
-    city: 'Mouans Sartoux',
-    lat: 43.607479,
-    lon: 6.9532,
-  },
+  domaine: 'meteo.ics.corp'
+};
+
+export const environment: IEnvironment = {
+  ...environmentDefault,
+  ...env,
 };

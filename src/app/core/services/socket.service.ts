@@ -4,7 +4,7 @@ import { Observable, Subject, catchError, of, share } from 'rxjs';
 import { ManagerOptions, Socket, SocketOptions, io } from 'socket.io-client';
 
 import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
+import { environment } from '@environment';
 import { AuthService } from './auth.service';
 
 export interface SocketIoConfig {
@@ -68,19 +68,15 @@ export class SocketService {
     this.removeAllListeners();
     this.disconnect();
 
-    const { protocol, hostname, port } = window.location;
-    const wsUrl = `${/* environment.production ? 'wss' : 'ws' */protocol}//${hostname}${port ? `:${port}` : ''}`;
-    // console.debug(wsUrl);
-
     return (
       new Observable<boolean>((subscribe) => {
         // Si le navigateur est compatible et qu'on a bien un utilisateur connecté
         if (this.BROWSER_SUPPORTS_WEBSOCKETS && token) {
           // Configuration de la WebSocket
           const config: SocketIoConfig = {
-            url: wsUrl,
+            url: `https://${environment.domaine}`,
             options: {
-              path: `${environment.apiUrl}/socket`,
+              path: `${environment.apiPath}/socket`,
               // transports: ['websocket'],
               reconnection: true,
               reconnectionAttempts: Infinity,

@@ -7,14 +7,14 @@ export const environmentDefault: IEnvironment = {
   domaine: 'localhost',
   apiPath: '/api',
   baseHref: '/',
-  get apiUrl(): string {
-    return `//${this.domaine}${this.apiPath}`;
-  },
-  port: 3000,
+  port: 3005,
   meteoblueApiKey: 'YOUR_METEOBLUE_API_KEY', // Remplacez par votre clé API MeteoBlue
   defaultWeatherLocation: {
     city: 'Mouans Sartoux',
     lat: 43.607479,
     lon: 6.9532,
   },
-}
+  get apiUrl(): string {
+    return `//${this.domaine}${this.apiPath}`;
+  },
+};

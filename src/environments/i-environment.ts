@@ -4,7 +4,6 @@ export interface IEnvironment {
   domaine: string;
   apiPath: string;
   baseHref: string;
-  apiUrl: string
   port: number;
   meteoblueApiKey: string;
   defaultWeatherLocation: {
@@ -12,4 +11,5 @@ export interface IEnvironment {
     lat: number;
     lon: number;
   };
+  apiUrl: string;
 }

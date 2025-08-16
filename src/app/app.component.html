@@ -95,7 +95,7 @@
   }
 
 
-  @if (socketConnected) {
+  @if (socketConnected && !isMobile()) {
   <app-chat-container></app-chat-container>
   }
 

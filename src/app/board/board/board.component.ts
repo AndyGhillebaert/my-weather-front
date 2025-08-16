@@ -17,6 +17,7 @@ import {
 } from '@angular/animations';
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { DatePipe, NgClass } from '@angular/common';
+import { MatBadgeModule } from '@angular/material/badge';
 import {
   MatBottomSheet,
   MatBottomSheetModule,
@@ -39,11 +40,17 @@ import { Role } from '../../core/models/role.enum';
 import { User } from '../../core/models/user';
 import { WorldDay } from '../../core/models/world-day';
 import { AuthService } from '../../core/services/auth.service';
+import {
+  DailyHuntNewFind,
+  DailyHuntService,
+  TodaysHuntPayload,
+} from '../../core/services/daily-hunt.service';
 import { MoodService } from '../../core/services/mood.service';
 import { PublicHolidaysService } from '../../core/services/public-holidays.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { UserService } from '../../core/services/user.service';
 import { WorldDaysService } from '../../core/services/world-days.service';
+import { DailyHuntComponent } from '../daily-hunt/daily-hunt.component';
 import { MoodChartComponent } from '../mood-chart/mood-chart.component';
 import {
   MoodUsersBottomSheetComponent,
@@ -71,9 +78,11 @@ import { WeatherWidgetComponent } from '../weather-widget/weather-widget.compone
     MatTooltipModule,
     MatProgressSpinnerModule,
     MatSlideToggleModule,
+    MatBadgeModule,
     WeatherWidgetComponent,
     NgScrollbarModule,
     MoodChartComponent,
+    DailyHuntComponent,
   ],
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.scss'],
@@ -100,6 +109,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   public themeService = inject(ThemeService);
   private _layoutService: LayoutService = inject(LayoutService);
   private bottomSheet = inject(MatBottomSheet);
+  private dailyHuntService = inject(DailyHuntService);
 
   currentUser: User | null = null;
   isAdmin = false;
@@ -189,6 +199,9 @@ export class BoardComponent implements OnInit, OnDestroy {
   focusedUser: User | null = null;
   focusedUserTimeout?: NodeJS.Timeout;
 
+  huntWinners: DailyHuntNewFind[] = [];
+  alreadyFoundToday = false;
+
   private subscriptions: Subscription[] = [];
 
   private currentAudio: HTMLAudioElement | null = null;
@@ -215,6 +228,7 @@ export class BoardComponent implements OnInit, OnDestroy {
     const currentUserSubscription = this.authService.currentUser$.subscribe(
       (user) => {
         this.currentUser = user;
+        console.log('Current user:', user);
         this.isAdmin = user?.role === Role.ADMIN;
       }
     );
@@ -303,6 +317,27 @@ export class BoardComponent implements OnInit, OnDestroy {
         this.isDarkMode = isDarkMode;
       });
     this.subscriptions.push(themeSubscription);
+
+    // Initialisation DailyHunt: récupérer l'état du jour au chargement
+    const todaysHuntInitSub = this.dailyHuntService
+      .getTodaysHuntFull()
+      .subscribe((payload: TodaysHuntPayload) => {
+        // Init winners
+        this.huntWinners = [...(payload.finds || [])].sort(
+          (a, b) => a.rank - b.rank
+        );
+        // Flag local pour usage éventuel (ex: relayer au composant DailyHunt)
+        this.alreadyFoundToday = !!payload.alreadyFound;
+      });
+    this.subscriptions.push(todaysHuntInitSub);
+
+    const newHuntFindSubscription = this.dailyHuntService
+      .onNewHuntFind()
+      .subscribe((newFind) => {
+        this.huntWinners.push(newFind);
+        this.huntWinners.sort((a, b) => a.rank - b.rank);
+      });
+    this.subscriptions.push(newHuntFindSubscription);
   }
 
   ngOnDestroy() {
@@ -330,6 +365,13 @@ export class BoardComponent implements OnInit, OnDestroy {
       this.calculateMedianMood(this.moods, users);
       this.users = users;
     }, 150);
+
+    const currentUser: User | null =
+      users.find((user) => user._id === this.currentUser?._id) || null;
+    if (currentUser) {
+      this.currentUser = currentUser;
+      this.isAdmin = currentUser.role === Role.ADMIN;
+    }
   }
 
   private calculateMedianMood(moods: Mood[], users: User[]) {
@@ -577,5 +619,59 @@ export class BoardComponent implements OnInit, OnDestroy {
   // Vérifier si le mood donné est celui de l'utilisateur actuel
   isCurrentUserMood(moodId: string): boolean {
     return this.currentUser?.mood?._id === moodId;
+  }
+
+  hasUserFoundHunt(userId: string): boolean {
+    return this.huntWinners.some((winner) => winner.user._id === userId);
+  }
+
+  getWinnerMedal(userId: string): string {
+    const winner = this.huntWinners.find(
+      (winner) => winner.user._id === userId
+    );
+    if (!winner) {
+      return '';
+    }
+    switch (winner.rank) {
+      case 1:
+        return '🥇';
+      case 2:
+        return '🥈';
+      case 3:
+        return '🥉';
+      default:
+        return `${winner.rank}`;
+    }
+  }
+
+  getWinnerTooltip(userId: string): string | null {
+    const winner = this.huntWinners.find(
+      (winner) => winner.user._id === userId
+    );
+    if (!winner) {
+      return null;
+    }
+
+    let tooltip;
+    if (winner.user._id === this.currentUser?._id) {
+      tooltip = `Vous avez trouvé la teub`;
+    } else {
+      tooltip = `${winner.user.displayName} a trouvé la teub`;
+    }
+    switch (winner.rank) {
+      case 1:
+        tooltip += ' en premier ! 🎉🥇';
+        break;
+
+      case 2:
+        tooltip += ' en deuxième ! 🎉🥈';
+        break;
+      case 3:
+        tooltip += ' en troisième ! 🎉🥉';
+        break;
+      default:
+        tooltip += ` en ${winner.rank}ème !`;
+    }
+    return tooltip;
   }
 }

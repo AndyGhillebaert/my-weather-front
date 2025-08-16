@@ -1,6 +1,8 @@
 <div class="board-container" [class.mobile-device]="isMobile()">
 
   @if(!isMobile()) {
+  <app-daily-hunt [huntFoundFromParent]="alreadyFoundToday"></app-daily-hunt>
+
   <!-- Zone neutre -->
   <div class="neutral-zone">
 
@@ -65,9 +67,12 @@
           (mouseenter)="toggleUserFocus(user, true)" (mouseleave)="toggleUserFocus(user, false)">
           <div class="user-card-title">
             <div class="user-avatar" [style.backgroundImage]="
-                      'url(' + (user.image || 'assets/default-avatar.png') + ')'
-                    "></div>
-            <h3>{{ user.displayName }}</h3>
+                  'url(' + (user.image || 'assets/default-avatar.png') + ')'
+                "></div>
+            <h3 class="user-name">{{ user.displayName }}</h3>
+            @if (hasUserFoundHunt(user._id)) {
+            <div class="user-medal" [matTooltip]="getWinnerTooltip(user._id)">{{ getWinnerMedal(user._id) }}</div>
+            }
           </div>
         </div>
         }
@@ -210,9 +215,12 @@
                 (mouseleave)="toggleUserFocus(user, false)">
                 <div class="user-card-title">
                   <div class="user-avatar" [style.backgroundImage]="
-                            'url(' + (user.image || 'assets/default-avatar.png') + ')'
-                          "></div>
-                  <h3>{{ user.displayName }}</h3>
+                    'url(' + (user.image || 'assets/default-avatar.png') + ')'
+                  "></div>
+                  <h3 class="user-name">{{ user.displayName }}</h3>
+                  @if (hasUserFoundHunt(user._id)) {
+                  <div class="user-medal" [matTooltip]="getWinnerTooltip(user._id)">{{ getWinnerMedal(user._id) }}</div>
+                  }
                 </div>
               </div>
               }
@@ -230,8 +238,9 @@
           role="button" tabindex="0" [attr.aria-label]="'Sélectionner l\'humeur ' + mood.name"
           (keydown.enter)="selectMood(mood._id)" (keydown.space)="selectMood(mood._id)">
           <div class="mood-progress-container">
-            <mat-progress-spinner mode="determinate" [value]="getMoodPercentage(mood._id)" [diameter]="100"
-              [strokeWidth]="6" [color]="'primary'" class="mood-progress-spinner">
+            <mat-progress-spinner mode="determinate" [value]="getMoodPercentage(mood._id)"
+              [matBadge]="getMoodUsersCount(mood._id)" [diameter]="100" [strokeWidth]="6" [color]="'primary'"
+              class="mood-progress-spinner">
             </mat-progress-spinner>
             <div class="mood-image-overlay">
               <img [src]="mood.image" alt="{{ mood.name }}" class="mood-image" />
@@ -239,8 +248,8 @@
           </div>
           <div class="mood-info">
             <h4>{{ mood.name }}</h4>
-            <p>{{ getMoodUsersCount(mood._id) }} / {{ getTotalUsersCount() }} utilisateurs</p>
-            <span class="mood-percentage">{{ getMoodPercentage(mood._id) }}%</span>
+            <!--<p>{{ getMoodUsersCount(mood._id) }} / {{ getTotalUsersCount() }} utilisateurs</p>
+            <span class="mood-percentage">{{ getMoodPercentage(mood._id) }}%</span>-->
           </div>
         </div>
         }

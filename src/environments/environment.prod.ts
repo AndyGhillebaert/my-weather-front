@@ -4,7 +4,7 @@ import { IEnvironment } from 'src/environments/i-environment';
 export const environment: IEnvironment = {
   ...environmentDefault,
   production: true,
-  domaine: 'meteo.ics.corp',
+  domaine: 'mameteo.app',
   get apiUrl(): string {
     return `https://${this.domaine}${this.apiPath}`;
   },

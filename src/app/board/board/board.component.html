@@ -117,7 +117,7 @@
           <mat-icon class="info-icon">today</mat-icon>
           <div class="info-content">
             <span class="info-label">Aujourd'hui</span>
-            <span class="info-value">{{ today | date : "dd/MM" }}</span>
+            <span class="info-value">{{ today | date : "longDate" }}</span>
             <span class="end-of-day-timer">
               <app-timer [interruptions]="workdayInterruptions" [startTime]="startOfDay" [endTime]="endOfDay"
                 [excludeInterruptsFromTimeLeft]="true"></app-timer>
@@ -131,7 +131,7 @@
           <mat-icon class="info-icon">celebration</mat-icon>
           <div class="info-content">
             <span class="info-label">Prochain férié</span>
-            <span class="info-value">{{ nextPublicHoliday.date | date : "dd/MM" }}</span>
+            <span class="info-value">{{ nextPublicHoliday.date | date : "fullDate" }}</span>
           </div>
         </div>
         }
@@ -142,7 +142,7 @@
             src="https://upload.wikimedia.org/wikipedia/fr/thumb/6/61/GTA_VI_logo.svg/1200px-GTA_VI_logo.svg.png"
             alt="GTA VI">
           <div class="info-content">
-            <span class="info-label">GTA VI</span>
+            <span class="info-label">sort dans</span>
             <app-timer class="info-timer" [startTime]="gtaVIReleaseDateAnnouncement" [endTime]="gtaVIReleaseDate"
               [labelBeforeTimer]="''"></app-timer>
           </div>
@@ -228,7 +228,7 @@
         @for (mood of moods; track mood._id) {
         <div class="mobile-mood-item">
           <div class="mood-progress-container">
-            <mat-progress-spinner mode="determinate" [value]="getMoodPercentage(mood._id)" [diameter]="80"
+            <mat-progress-spinner mode="determinate" [value]="getMoodPercentage(mood._id)" [diameter]="100"
               [strokeWidth]="6" [color]="'primary'" class="mood-progress-spinner">
             </mat-progress-spinner>
             <div class="mood-image-overlay">

@@ -22,6 +22,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgScrollbarModule } from 'ngx-scrollbar';
@@ -57,6 +58,7 @@ import { WeatherWidgetComponent } from '../weather-widget/weather-widget.compone
     DatePipe,
     TimerComponent,
     MatTooltipModule,
+    MatProgressSpinnerModule,
     MatSlideToggleModule,
     WeatherWidgetComponent,
     NgScrollbarModule,
@@ -475,5 +477,24 @@ export class BoardComponent implements OnInit, OnDestroy {
 
   toggleMoodChart(): void {
     this.moodChartOpened = !this.moodChartOpened;
+  }
+
+  // Calculer le pourcentage d'utilisateurs pour un mood donné
+  getMoodPercentage(moodId: string): number {
+    const totalUsers = this.users.length;
+    if (totalUsers === 0) return 0;
+
+    const usersWithMood = this.getUsersByMood(moodId).length;
+    return Math.round((usersWithMood / totalUsers) * 100);
+  }
+
+  // Obtenir le nombre total d'utilisateurs
+  getTotalUsersCount(): number {
+    return this.users.length;
+  }
+
+  // Obtenir le nombre d'utilisateurs pour un mood donné
+  getMoodUsersCount(moodId: string): number {
+    return this.getUsersByMood(moodId).length;
   }
 }

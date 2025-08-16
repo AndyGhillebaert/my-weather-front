@@ -133,6 +133,8 @@
     </div>
 
     <ng-scrollbar class="my-weather-scrollbar">
+
+      @if(!isMobile()) {
       <div class="board-grid">
         <!-- Colonnes des humeurs -->
         @for (mood of moods; track mood._id) {
@@ -162,8 +164,8 @@
                 (mouseleave)="toggleUserFocus(user, false)">
                 <div class="user-card-title">
                   <div class="user-avatar" [style.backgroundImage]="
-                    'url(' + (user.image || 'assets/default-avatar.png') + ')'
-                  "></div>
+                            'url(' + (user.image || 'assets/default-avatar.png') + ')'
+                          "></div>
                   <h3>{{ user.displayName }}</h3>
                 </div>
               </div>
@@ -173,6 +175,29 @@
         </div>
         }
       </div>
+      }
+      @else {
+      <!-- Version mobile avec progress spinners -->
+      <div class="mobile-moods-container">
+        @for (mood of moods; track mood._id) {
+        <div class="mobile-mood-item">
+          <div class="mood-progress-container">
+            <mat-progress-spinner mode="determinate" [value]="getMoodPercentage(mood._id)" [diameter]="80"
+              [strokeWidth]="6" [color]="'primary'" class="mood-progress-spinner">
+            </mat-progress-spinner>
+            <div class="mood-image-overlay">
+              <img [src]="mood.image" alt="{{ mood.name }}" class="mood-image" />
+            </div>
+          </div>
+          <div class="mood-info">
+            <h4>{{ mood.name }}</h4>
+            <p>{{ getMoodUsersCount(mood._id) }} / {{ getTotalUsersCount() }} utilisateurs</p>
+            <span class="mood-percentage">{{ getMoodPercentage(mood._id) }}%</span>
+          </div>
+        </div>
+        }
+      </div>
+      }
     </ng-scrollbar>
 
     @if(!isMobile()) {

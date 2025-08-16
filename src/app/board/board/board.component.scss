@@ -70,6 +70,112 @@
   }
 }
 
+// Styles pour l'affichage mobile des informations
+.mobile-info-container {
+  padding: 10px 15px;
+  background: var(--mat-sys-surface-container-lowest);
+  border-radius: 12px;
+  margin: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .mobile-info-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 5px 0;
+
+    .mobile-info-card {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: var(--mat-sys-surface-container);
+      border-radius: 20px;
+      border: 1px solid var(--mat-sys-outline-variant);
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: var(--mat-sys-surface-container-high);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .info-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: var(--mat-sys-primary);
+        flex-shrink: 0;
+      }
+
+      .gta-icon {
+        width: 18px;
+        height: 18px;
+        object-fit: contain;
+        flex-shrink: 0;
+      }
+
+      .info-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+
+        .info-label {
+          font-size: 10px;
+          font-weight: 500;
+          color: var(--mat-sys-on-surface-variant);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          line-height: 1;
+        }
+
+        .info-value {
+          font-size: 12px;
+          font-weight: 600;
+          color: var(--mat-sys-on-surface);
+          line-height: 1;
+        }
+
+        .info-timer {
+          font-size: 11px;
+          font-weight: 600;
+          color: var(--mat-sys-primary);
+
+          ::ng-deep {
+            .timer-content {
+              font-size: 11px;
+              line-height: 1;
+            }
+          }
+        }
+      }
+
+      // Couleurs spécifiques pour chaque type de carte
+      &.today-card {
+        border-color: var(--mat-sys-primary);
+        .info-icon {
+          color: var(--mat-sys-primary);
+        }
+      }
+
+      &.holiday-card {
+        border-color: var(--mat-sys-secondary);
+        .info-icon {
+          color: var(--mat-sys-secondary);
+        }
+      }
+
+      &.gta-card {
+        border-color: var(--mat-sys-tertiary);
+        .info-value {
+          color: var(--mat-sys-tertiary);
+        }
+      }
+    }
+  }
+}
+
 // Ajustements pour les thèmes sombres
 .dark-theme {
   .mobile-moods-container {

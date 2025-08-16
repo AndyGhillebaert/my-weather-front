@@ -107,6 +107,51 @@
 
   <div class="board-grid-container">
     <div class="board-background" [style.backgroundImage]="'url(' + backgroundImgUrl + ')'"></div>
+
+    @if(isMobile()) {
+    <!-- Version mobile compacte des informations -->
+    <div class="mobile-info-container">
+      <div class="mobile-info-cards">
+        <!-- Date du jour -->
+        <div class="mobile-info-card today-card">
+          <mat-icon class="info-icon">today</mat-icon>
+          <div class="info-content">
+            <span class="info-label">Aujourd'hui</span>
+            <span class="info-value">{{ today | date : "dd/MM" }}</span>
+            <span class="end-of-day-timer">
+              <app-timer [interruptions]="workdayInterruptions" [startTime]="startOfDay" [endTime]="endOfDay"
+                [excludeInterruptsFromTimeLeft]="true"></app-timer>
+            </span>
+          </div>
+        </div>
+
+        <!-- Prochain jour férié -->
+        @if (nextPublicHoliday) {
+        <div class="mobile-info-card holiday-card">
+          <mat-icon class="info-icon">celebration</mat-icon>
+          <div class="info-content">
+            <span class="info-label">Prochain férié</span>
+            <span class="info-value">{{ nextPublicHoliday.date | date : "dd/MM" }}</span>
+          </div>
+        </div>
+        }
+
+        <!-- GTA VI -->
+        <div class="mobile-info-card gta-card">
+          <img class="gta-icon"
+            src="https://upload.wikimedia.org/wikipedia/fr/thumb/6/61/GTA_VI_logo.svg/1200px-GTA_VI_logo.svg.png"
+            alt="GTA VI">
+          <div class="info-content">
+            <span class="info-label">GTA VI</span>
+            <app-timer class="info-timer" [startTime]="gtaVIReleaseDateAnnouncement" [endTime]="gtaVIReleaseDate"
+              [labelBeforeTimer]="''"></app-timer>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+
+    @if(!isMobile()) {
     <!-- Date du jour -->
     <div class="date-container">
       <h2 class="today-date">
@@ -131,6 +176,7 @@
         </span>
       </h2>
     </div>
+    }
 
     <ng-scrollbar class="my-weather-scrollbar">
 

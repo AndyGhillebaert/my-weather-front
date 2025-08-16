@@ -1,0 +1,15 @@
+<div class="mood-selection-button-container">
+  <button mat-raised-button [color]="isSelected ? 'primary' : 'accent'" class="mood-selection-button"
+    (click)="onSelectMood()" [attr.aria-label]="'Choisir l\'humeur ' + mood.name">
+
+    <div class="button-content">
+      <img [src]="mood.image" [alt]="mood.name" class="mood-icon" />
+      <span class="mood-name">{{ isSelected ? 'Mon humeur actuelle' : 'Choisir cette humeur' }}</span>
+      <span class="mood-title">{{ mood.name }}</span>
+    </div>
+
+    @if (isSelected) {
+    <mat-icon class="selected-icon">check_circle</mat-icon>
+    }
+  </button>
+</div>

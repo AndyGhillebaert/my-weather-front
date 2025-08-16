@@ -1,0 +1,58 @@
+<div class="mood-users-bottom-sheet">
+  <!-- Bouton de sélection de mood fixe en haut -->
+  <app-mood-selection-button [mood]="mood" [isSelected]="isCurrentUserMood" (moodSelected)="onMoodSelected($event)">
+  </app-mood-selection-button>
+
+  <!-- Header avec titre et bouton fermer -->
+  <div class="bottom-sheet-header">
+    <div class="header-content">
+      <div class="mood-info">
+        <img [src]="mood.image" [alt]="mood.name" class="mood-icon" />
+        <div class="mood-details">
+          <h2>{{ mood.name }}</h2>
+          <p>{{ users.length }} utilisateur{{ users.length > 1 ? 's' : '' }}</p>
+        </div>
+      </div>
+      <button mat-icon-button (click)="onClose()" aria-label="Fermer">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Liste des utilisateurs avec scroll -->
+  <div class="users-list-container">
+    <ng-scrollbar class="my-weather-scrollbar">
+      @if (users.length > 0) {
+      <mat-list class="users-list">
+        @for (user of users; track user._id) {
+        <mat-list-item class="user-item">
+          <div class="user-content">
+            <div class="user-avatar"
+              [style.backgroundImage]="'url(' + (user.image || 'assets/default-avatar.png') + ')'">
+            </div>
+            <div class="user-info">
+              <h3>{{ user.displayName }}</h3>
+              <p>{{ user.username }}</p>
+              @if (user.moodUpdatedAt) {
+              <span class="mood-updated-time">
+                Mis à jour {{ formatMoodUpdateTime(user.moodUpdatedAt) }}
+              </span>
+              }
+            </div>
+            @if (user._id === currentUser?._id) {
+            <mat-icon class="current-user-icon">person</mat-icon>
+            }
+          </div>
+        </mat-list-item>
+        }
+      </mat-list>
+      } @else {
+      <div class="empty-state">
+        <mat-icon class="empty-icon">sentiment_neutral</mat-icon>
+        <h3>Aucun utilisateur</h3>
+        <p>Personne n'a encore choisi cette humeur</p>
+      </div>
+      }
+    </ng-scrollbar>
+  </div>
+</div>

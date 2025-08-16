@@ -1,0 +1,5 @@
+Création du dossier "android" :
+1- npx cap add android
+2 - npm run build
+3- npx cap copy
+4 - npx cap open android OU npx cap run android

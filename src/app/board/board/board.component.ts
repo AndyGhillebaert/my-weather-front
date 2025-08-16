@@ -17,10 +17,15 @@ import {
 } from '@angular/animations';
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { DatePipe, NgClass } from '@angular/common';
+import {
+  MatBottomSheet,
+  MatBottomSheetModule,
+} from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -40,6 +45,10 @@ import { ThemeService } from '../../core/services/theme.service';
 import { UserService } from '../../core/services/user.service';
 import { WorldDaysService } from '../../core/services/world-days.service';
 import { MoodChartComponent } from '../mood-chart/mood-chart.component';
+import {
+  MoodUsersBottomSheetComponent,
+  MoodUsersBottomSheetData,
+} from '../mood-users-list/mood-users-bottom-sheet/mood-users-bottom-sheet.component';
 import { Interruption, TimerComponent } from '../timer/timer.component';
 import { WeatherWidgetComponent } from '../weather-widget/weather-widget.component';
 
@@ -53,6 +62,8 @@ import { WeatherWidgetComponent } from '../weather-widget/weather-widget.compone
     MatCardModule,
     MatIconModule,
     MatButtonModule,
+    MatBottomSheetModule,
+    MatListModule,
     NgClass,
     RouterModule,
     DatePipe,
@@ -88,6 +99,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   private publicHolidaysService = inject(PublicHolidaysService);
   public themeService = inject(ThemeService);
   private _layoutService: LayoutService = inject(LayoutService);
+  private bottomSheet = inject(MatBottomSheet);
 
   currentUser: User | null = null;
   isAdmin = false;
@@ -507,6 +519,20 @@ export class BoardComponent implements OnInit, OnDestroy {
   selectMood(moodId: string): void {
     if (!this.currentUser) return;
 
+    // Sur mobile, ouvrir le bottom sheet au lieu de sélectionner directement
+    if (this.isMobile()) {
+      this.openMoodUsersBottomSheet(moodId);
+      return;
+    }
+
+    // Sur desktop, sélectionner directement le mood
+    this.updateUserMood(moodId);
+  }
+
+  // Méthode pour mettre à jour le mood de l'utilisateur
+  private updateUserMood(moodId: string): void {
+    if (!this.currentUser) return;
+
     // Mettre à jour immédiatement l'interface utilisateur
     this.setUsers(
       this.users.map((user) => {
@@ -520,6 +546,32 @@ export class BoardComponent implements OnInit, OnDestroy {
 
     // Appeler le service pour mettre à jour le mood de l'utilisateur
     this.userService.updateUserMood(this.currentUser._id, moodId);
+  }
+
+  // Ouvrir le bottom sheet avec la liste des utilisateurs pour un mood
+  openMoodUsersBottomSheet(moodId: string): void {
+    const mood = this.moods.find((m) => m._id === moodId);
+    if (!mood) return;
+
+    const users = this.getUsersByMood(moodId);
+
+    const bottomSheetRef = this.bottomSheet.open(
+      MoodUsersBottomSheetComponent,
+      {
+        data: {
+          mood,
+          users,
+          currentUser: this.currentUser,
+        } as MoodUsersBottomSheetData,
+        panelClass: 'mood-users-bottom-sheet-panel',
+      }
+    );
+
+    bottomSheetRef.afterDismissed().subscribe((result) => {
+      if (result?.action === 'select' && result?.moodId) {
+        this.updateUserMood(result.moodId);
+      }
+    });
   }
 
   // Vérifier si le mood donné est celui de l'utilisateur actuel

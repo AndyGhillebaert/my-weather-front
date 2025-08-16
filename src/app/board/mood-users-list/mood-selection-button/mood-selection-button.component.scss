@@ -1,0 +1,79 @@
+.mood-selection-button-container {
+  padding: 16px;
+  background: var(--mat-app-background);
+  border-bottom: 1px solid var(--mat-app-outline-variant);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.mood-selection-button {
+  width: 100%;
+  height: 80px;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+
+  .button-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+
+    .mood-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .mood-name {
+      font-size: 16px;
+      font-weight: 500;
+      flex-grow: 1;
+      text-align: left;
+    }
+
+    .mood-title {
+      font-size: 14px;
+      opacity: 0.8;
+      font-weight: 400;
+    }
+  }
+
+  .selected-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--mat-app-primary);
+  }
+
+  &[color="primary"] {
+    background: var(--mat-app-primary-container);
+    color: var(--mat-app-on-primary-container);
+
+    .selected-icon {
+      color: var(--mat-app-primary);
+    }
+  }
+
+  &[color="accent"] {
+    background: var(--mat-app-surface-variant);
+    color: var(--mat-app-on-surface-variant);
+
+    &:hover {
+      background: var(--mat-app-primary-container);
+      color: var(--mat-app-on-primary-container);
+    }
+  }
+}
+
+// Mode sombre
+:host-context(.dark-theme) {
+  .mood-selection-button-container {
+    background: var(--mat-app-surface);
+    border-bottom-color: var(--mat-app-outline);
+  }
+}

@@ -226,7 +226,9 @@
       <!-- Version mobile avec progress spinners -->
       <div class="mobile-moods-container">
         @for (mood of moods; track mood._id) {
-        <div class="mobile-mood-item">
+        <div class="mobile-mood-item" [class.selected]="isCurrentUserMood(mood._id)" (click)="selectMood(mood._id)"
+          role="button" tabindex="0" [attr.aria-label]="'Sélectionner l\'humeur ' + mood.name"
+          (keydown.enter)="selectMood(mood._id)" (keydown.space)="selectMood(mood._id)">
           <div class="mood-progress-container">
             <mat-progress-spinner mode="determinate" [value]="getMoodPercentage(mood._id)" [diameter]="100"
               [strokeWidth]="6" [color]="'primary'" class="mood-progress-spinner">

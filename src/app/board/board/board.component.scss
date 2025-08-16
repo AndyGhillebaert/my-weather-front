@@ -13,14 +13,115 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
+    cursor: pointer;
+    padding: 16px;
+    border-radius: 16px;
+    background: var(--mat-sys-surface-container-low);
+    border: 2px solid transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+
+    // Effet de ripple subtil
+    &::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: radial-gradient(
+        circle,
+        var(--mat-sys-primary) 0%,
+        transparent 70%
+      );
+      opacity: 0;
+      transform: translate(-50%, -50%);
+      transition: all 0.6s ease;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    // États interactifs
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      border-color: var(--mat-sys-primary);
+      background: var(--mat-sys-surface-container);
+
+      &::before {
+        width: 100px;
+        height: 100px;
+        opacity: 0.1;
+      }
+
+      .mood-progress-container {
+        transform: scale(1.05);
+      }
+
+      .mood-info h4 {
+        color: var(--mat-sys-primary);
+      }
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--mat-sys-primary);
+      box-shadow: 0 0 0 3px rgba(var(--mat-sys-primary-rgb), 0.2);
+    }
+
+    &:active {
+      transform: translateY(-2px) scale(0.98);
+    }
+
+    // État sélectionné
+    &.selected {
+      background: var(--mat-sys-primary-container);
+      border-color: var(--mat-sys-primary);
+      box-shadow: 0 4px 20px rgba(var(--mat-sys-primary-rgb), 0.3);
+
+      .mood-progress-container {
+        transform: scale(1.1);
+
+        .mood-progress-spinner {
+          ::ng-deep .mat-progress-spinner circle {
+            stroke: var(--mat-sys-primary);
+            stroke-width: 8;
+          }
+        }
+
+        .mood-image-overlay {
+          border: 3px solid var(--mat-sys-primary);
+          box-shadow: 0 4px 12px rgba(var(--mat-sys-primary-rgb), 0.4);
+        }
+      }
+
+      .mood-info {
+        h4 {
+          color: var(--mat-sys-on-primary-container);
+          font-weight: 600;
+        }
+
+        p {
+          color: var(--mat-sys-on-primary-container);
+        }
+
+        .mood-percentage {
+          color: var(--mat-sys-primary);
+          font-weight: 700;
+        }
+      }
+    }
 
     .mood-progress-container {
       position: relative;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
       .mood-progress-spinner {
         ::ng-deep .mat-progress-spinner circle {
           stroke: var(--mat-primary-500);
+          transition: all 0.3s ease;
         }
       }
 
@@ -36,35 +137,57 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: rgba(255, 255, 255, 0.9);
+        background-color: rgba(255, 255, 255, 0.95);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
         .mood-image {
           width: 60px;
           height: 60px;
           object-fit: cover;
           border-radius: 50%;
+          transition: transform 0.3s ease;
         }
       }
     }
 
     .mood-info {
+      transition: all 0.3s ease;
+
       h4 {
-        margin: 0 0 5px 0;
+        margin: 0 0 6px 0;
         font-size: 14px;
         font-weight: 500;
         color: var(--mat-on-surface);
+        transition: all 0.3s ease;
       }
 
       p {
-        margin: 0 0 5px 0;
+        margin: 0 0 6px 0;
         font-size: 12px;
         color: var(--mat-on-surface-variant);
+        transition: all 0.3s ease;
       }
 
       .mood-percentage {
         font-size: 16px;
         font-weight: bold;
         color: var(--mat-primary-500);
+        transition: all 0.3s ease;
+      }
+    }
+
+    // Animation d'entrée
+    animation: moodItemEnter 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+
+    @keyframes moodItemEnter {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
       }
     }
   }

@@ -186,6 +186,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   private usersTimeout: any;
 
   moodChartOpened = true;
+  moodUsersListOpened = false;
 
   constructor() {
     this.startOfDay = new Date(this.today);
@@ -479,6 +480,10 @@ export class BoardComponent implements OnInit, OnDestroy {
     this.moodChartOpened = !this.moodChartOpened;
   }
 
+  toggleMoodUsersList(): void {
+    this.moodUsersListOpened = !this.moodUsersListOpened;
+  }
+
   // Calculer le pourcentage d'utilisateurs pour un mood donné
   getMoodPercentage(moodId: string): number {
     const totalUsers = this.users.length;
@@ -496,5 +501,29 @@ export class BoardComponent implements OnInit, OnDestroy {
   // Obtenir le nombre d'utilisateurs pour un mood donné
   getMoodUsersCount(moodId: string): number {
     return this.getUsersByMood(moodId).length;
+  }
+
+  // Sélectionner un mood pour l'utilisateur actuel
+  selectMood(moodId: string): void {
+    if (!this.currentUser) return;
+
+    // Mettre à jour immédiatement l'interface utilisateur
+    this.setUsers(
+      this.users.map((user) => {
+        if (user._id === this.currentUser?._id) {
+          user.mood = this.moods.find((mood) => mood._id === moodId);
+          user.moodUpdatedAt = new Date();
+        }
+        return user;
+      })
+    );
+
+    // Appeler le service pour mettre à jour le mood de l'utilisateur
+    this.userService.updateUserMood(this.currentUser._id, moodId);
+  }
+
+  // Vérifier si le mood donné est celui de l'utilisateur actuel
+  isCurrentUserMood(moodId: string): boolean {
+    return this.currentUser?.mood?._id === moodId;
   }
 }

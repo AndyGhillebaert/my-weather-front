@@ -1,7 +1,9 @@
 <div class="app-container">
 
-  @if(currentUser(); as user){
+
   @if(isMobile()) {
+
+  @if (socketConnected) {
   <mat-toolbar>
     <button matIconButton (click)="snav.toggle()">
       <mat-icon>menu</mat-icon>
@@ -13,12 +15,14 @@
       <mat-nav-list>
 
         <div class="user-menu-header">
+          @if(currentUser(); as user){
           <div class="user-avatar" [style.backgroundImage]="
-                            'url(' + (user.image || 'assets/default-avatar.png') + ')'
-                          "></div>
+                                        'url(' + (user.image || 'assets/default-avatar.png') + ')'
+                                      "></div>
           <p>Connecté en tant que</p>
           <h3>{{ user.displayName }}</h3>
           <p>{{ user.username }}</p>
+          }
         </div>
         <mat-divider></mat-divider>
 
@@ -75,11 +79,14 @@
 
       </mat-nav-list>
     </mat-sidenav>
-
     <mat-sidenav-content>
       <router-outlet />
     </mat-sidenav-content>
   </mat-sidenav-container>
+  }
+  @else {
+  <router-outlet />
+  }
   }
   @else {
   <div class="router-container">
@@ -87,10 +94,11 @@
   </div>
   }
 
+
   @if (socketConnected) {
   <app-chat-container></app-chat-container>
   }
-  }
+
 
 
 </div>

@@ -1,4 +1,4 @@
-@use '@angular/material' as mat;
+@use "@angular/material" as mat;
 
 .mood-chart-container {
   position: relative;
@@ -21,7 +21,19 @@
     }
   }
 
-  @include mat.button-toggle-overrides((
-    height: 30px
-  ));
+  @include mat.button-toggle-overrides(
+    (
+      height: 30px,
+    )
+  );
+}
+
+.mobile-device {
+  &.mood-chart-container {
+    margin-left: 0;
+    width: 100%;
+    .mood-chart-canvas-container {
+      height: 200px;
+    }
+  }
 }

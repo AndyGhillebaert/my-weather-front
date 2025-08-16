@@ -239,8 +239,6 @@
       padding: 0 10px;
       margin: 10px 0 10px;
     }
-
-
   }
 
   .open-chart-button {
@@ -422,4 +420,18 @@
 // (déjà géré par (click)="$event.stopPropagation();" dans le HTML, mais au cas où)
 .mat-mdc-menu-item.theme-toggle-container:hover {
   background-color: transparent !important; // Empêche le changement de fond au survol
+}
+
+.mobile-device {
+  &.board-container {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  .board-grid-container {
+    .date-container {
+      height: auto;
+    }
+  }
 }

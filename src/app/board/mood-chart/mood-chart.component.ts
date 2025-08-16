@@ -1,9 +1,10 @@
 import { CommonModule, formatDate } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, Signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { Chart, registerables } from 'chart.js';
 import { Subscription } from 'rxjs';
+import { LayoutService } from 'src/app/core/services/layout.service';
 import { Mood } from '../../core/models/mood';
 import { MoodChartData } from '../../core/models/mood-chart-data';
 import { MoodChartService } from '../../core/services/mood-chart.service';
@@ -23,6 +24,7 @@ export class MoodChartComponent implements OnInit, OnDestroy {
   private userService = inject(UserService);
   public themeService = inject(ThemeService);
   private moodService = inject(MoodService);
+  private _layoutService: LayoutService = inject(LayoutService);
 
   private moodChart: Chart | undefined;
   private moodChartData: MoodChartData[] | undefined;
@@ -32,6 +34,7 @@ export class MoodChartComponent implements OnInit, OnDestroy {
 
   isDarkMode: boolean;
   moods: Mood[] = [];
+  isMobile: Signal<boolean> = this._layoutService.isMobile;
 
   daysOptions = [
     { value: 7, label: '7 derniers jours' },

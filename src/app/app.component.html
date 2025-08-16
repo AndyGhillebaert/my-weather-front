@@ -1,5 +1,96 @@
-<router-outlet />
+<div class="app-container">
 
-@if (socketConnected) {
-<app-chat-container></app-chat-container>
-}
+  @if(currentUser(); as user){
+  @if(isMobile()) {
+  <mat-toolbar>
+    <button matIconButton (click)="snav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span>MyWeather</span>
+  </mat-toolbar>
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #snav [mode]="isMobile() ? 'over' : 'side'" [fixedInViewport]="isMobile()" fixedTopGap="56">
+      <mat-nav-list>
+
+        <div class="user-menu-header">
+          <div class="user-avatar" [style.backgroundImage]="
+                            'url(' + (user.image || 'assets/default-avatar.png') + ')'
+                          "></div>
+          <p>Connecté en tant que</p>
+          <h3>{{ user.displayName }}</h3>
+          <p>{{ user.username }}</p>
+        </div>
+        <mat-divider></mat-divider>
+
+        <a mat-list-item routerLink="/profile" (click)="snav.close()" [routerLinkActive]="'active'">
+          <span class="align-icon">
+            <mat-icon fontIcon="account_circle"></mat-icon>
+            <span>Mon profil</span>
+          </span>
+        </a>
+
+        <mat-divider class="user-menu-divider"></mat-divider>
+        <a mat-list-item routerLink="/polls" (click)="snav.close()">
+          <span class="align-icon">
+            <mat-icon fontIcon="poll"></mat-icon>
+            <span>Sondages</span>
+          </span>
+
+        </a>
+        <a mat-list-item routerLink="/games" (click)="snav.close()">
+          <span class="align-icon">
+            <mat-icon fontIcon="sports_esports"></mat-icon>
+            <span>Je m'ennuie</span>
+          </span>
+
+        </a>
+
+        @if (isAdmin()) {
+        <a mat-list-item routerLink="/admin/moods" (click)="snav.close()">
+          <mat-icon fontIcon="admin_panel_settings"></mat-icon>
+          <span>Administration</span>
+        </a>
+        }
+        <mat-divider class="user-menu-divider"></mat-divider>
+
+        <mat-list-item class="theme-toggle-container" (click)="$event.stopPropagation();">
+          <mat-slide-toggle [checked]="themeService.isDarkMode" (change)="themeService.toggleTheme()"
+            aria-label="Changer de thème">
+            <span class="align-icon">
+              <mat-icon fontIcon="brightness_4"></mat-icon>
+              <span class="theme-toggle-label">{{ themeService.isDarkMode ? 'Sombre' : 'Clair' }}</span>
+            </span>
+
+          </mat-slide-toggle>
+        </mat-list-item>
+
+        <mat-divider class="user-menu-divider"></mat-divider>
+        <a mat-list-item (click)="logout();snav.close()">
+          <span class="align-icon">
+            <mat-icon fontIcon="exit_to_app" class="text-error"></mat-icon>
+            <span>Déconnexion</span>
+          </span>
+
+        </a>
+
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+      <router-outlet />
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+  }
+  @else {
+  <div class="router-container">
+    <router-outlet />
+  </div>
+  }
+
+  @if (socketConnected) {
+  <app-chat-container></app-chat-container>
+  }
+  }
+
+
+</div>

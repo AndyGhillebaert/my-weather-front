@@ -1,0 +1,30 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.user-menu-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  .user-avatar {
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+  }
+  h3,
+  p {
+    margin: 0;
+  }
+}
+
+.sidenav-container,
+.router-container {
+  flex: auto;
+}

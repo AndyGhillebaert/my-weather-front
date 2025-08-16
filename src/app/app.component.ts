@@ -1,8 +1,25 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import {
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  Signal,
+  WritableSignal,
+} from '@angular/core';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatToolbar } from '@angular/material/toolbar';
+import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ChatContainerComponent } from './chat/chat-container/chat-container.component';
+import { Role } from './core/models/role.enum';
+import { User } from './core/models/user';
 import { AuthService } from './core/services/auth.service';
+import { LayoutService } from './core/services/layout.service';
 import { NotificationService } from './core/services/notification.service';
 import { SocketService } from './core/services/socket.service';
 import { ThemeService } from './core/services/theme.service';
@@ -11,7 +28,17 @@ import { AppUpdateService } from './core/services/update.service';
 @Component({
   standalone: true,
   selector: 'app-root',
-  imports: [RouterOutlet, ChatContainerComponent],
+  imports: [
+    MatToolbar,
+    MatIcon,
+    MatIconButton,
+    MatListModule,
+    MatSidenavModule,
+    MatSlideToggleModule,
+    RouterOutlet,
+    RouterModule,
+    ChatContainerComponent,
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
@@ -21,12 +48,17 @@ export class AppComponent implements OnInit, OnDestroy {
   private notificationService = inject(NotificationService);
   private appUpdateService = inject(AppUpdateService);
   private router = inject(Router);
-  private themeService = inject(ThemeService);
+  public themeService = inject(ThemeService);
+  private _layoutService: LayoutService = inject(LayoutService);
 
   private currentUserSubscription: Subscription | null = null;
   private socketSubscription: Subscription | null = null;
 
   socketConnected = false;
+
+  currentUser: WritableSignal<User | null> = signal(null);
+  isAdmin: WritableSignal<boolean> = signal(false);
+  isMobile: Signal<boolean> = this._layoutService.isMobile;
 
   constructor() {
     // L'initialisation du thème se fait maintenant dans le constructeur du ThemeService
@@ -50,6 +82,8 @@ export class AppComponent implements OnInit, OnDestroy {
                 if (connected) {
                   this.notificationService.init();
                   this.socketConnected = true;
+                  this.currentUser.set(user);
+                  this.isAdmin.set(user?.role === Role.ADMIN);
                 } else {
                   this.socketConnected = false;
                 }
@@ -67,5 +101,10 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.socketSubscription) {
       this.socketSubscription.unsubscribe();
     }
+  }
+
+  logout() {
+    // console.debug('[BoardComponent] logout');
+    this.authService.logout();
   }
 }

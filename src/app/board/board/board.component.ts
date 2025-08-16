@@ -3,7 +3,8 @@ import {
   inject,
   LOCALE_ID,
   OnDestroy,
-  OnInit
+  OnInit,
+  Signal,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
@@ -25,6 +26,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { Subscription } from 'rxjs';
+import { LayoutService } from 'src/app/core/services/layout.service';
 import { Mood } from '../../core/models/mood';
 import { PublicHoliday } from '../../core/models/public-holiday';
 import { Role } from '../../core/models/role.enum';
@@ -83,9 +85,11 @@ export class BoardComponent implements OnInit, OnDestroy {
   private worldDaysService = inject(WorldDaysService);
   private publicHolidaysService = inject(PublicHolidaysService);
   public themeService = inject(ThemeService);
+  private _layoutService: LayoutService = inject(LayoutService);
 
   currentUser: User | null = null;
   isAdmin = false;
+  isMobile: Signal<boolean> = this._layoutService.isMobile;
 
   isDarkMode = this.themeService.isDarkMode;
 
